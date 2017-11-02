@@ -46,10 +46,10 @@ public class Parser {
         for (Element element : href) {
             String url = element.attr("href");
             if (url != null && url.length() > 0) {
-                if (url.indexOf("/suche?") == 0) {
-                    offersURLs.addAll(getUrlSetFromSearch("https://www.aboutyou.de" + url));
-                } else {
+                if (url.indexOf("/p/") == 0) {
                     offersURLs.add("https://www.aboutyou.de" + url);
+                } else {
+                    offersURLs.addAll(getUrlSetFromSearch("https://www.aboutyou.de" + url));
                 }
             }
         }
