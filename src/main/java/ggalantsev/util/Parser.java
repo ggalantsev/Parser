@@ -26,6 +26,7 @@ public class Parser {
 
     private static final Logger log = Logger.getLogger(Parser.class);
 
+    private static int httpRequestsCount = 0;
 
     public static Set<String> getUrlSetFromSearchByPattern(String pattern) {
         return getUrlSetFromSearch("https://www.aboutyou.de/suche?term=%22" + pattern + "%22");
@@ -37,7 +38,7 @@ public class Parser {
         // For local testing
 //        Document search = Parser.getDocumentFromFile(new File("search2.html"));
 
-        Set<String> absLinks = new HashSet<String>();
+        Set<String> offersURLs = new HashSet<String>();
 
         Elements href = search.body().getElementsByClass("product-image-list").first()
                 .getElementsByAttribute("href");
@@ -46,14 +47,14 @@ public class Parser {
             String url = element.attr("href");
             if (url != null && url.length() > 0) {
                 if (url.indexOf("/suche?") == 0) {
-                    absLinks.addAll(getUrlSetFromSearch("https://www.aboutyou.de" + url));
+                    offersURLs.addAll(getUrlSetFromSearch("https://www.aboutyou.de" + url));
                 } else {
-                    absLinks.add("https://www.aboutyou.de" + url);
+                    offersURLs.add("https://www.aboutyou.de" + url);
                 }
             }
         }
-        log.trace("Collected " + absLinks.size() + " urls from " + searchUrl);
-        return absLinks;
+        log.trace("Collected " + offersURLs.size() + " urls from " + searchUrl);
+        return offersURLs;
     }
 
     public static Offers getOffers(File file) {
@@ -151,7 +152,7 @@ public class Parser {
         return offers;
     }
 
-    public static Document getDocumentFromUrl(String url) {
+    private static Document getDocumentFromUrl(String url) {
         try {
             Document doc = Jsoup.connect(url)
                     .header("Accept-Encoding", "gzip, deflate")
@@ -159,6 +160,7 @@ public class Parser {
                     .maxBodySize(0)
                     .timeout(600000)
                     .get();
+            httpRequestsCount++;
             log.info("Initialized: [" + doc.title() + "] " + url);
             return doc;
         } catch (IOException e) {
@@ -168,7 +170,7 @@ public class Parser {
         }
     }
 
-    public static Document getDocumentFromFile(File filename) {
+    private static Document getDocumentFromFile(File filename) {
         try {
             Document doc = Jsoup.parse(filename, "UTF-8");
             log.info("Initialized: [" + doc.title() + ']');
@@ -189,6 +191,10 @@ public class Parser {
                 .replaceAll(" +", " ")
                 .replaceAll("\n ", "\n")
                 .replaceAll("\n+", "");
+    }
+
+    public static int getHttpRequestsCount(){
+        return httpRequestsCount;
     }
 
 }

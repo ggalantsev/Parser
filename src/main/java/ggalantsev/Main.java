@@ -28,8 +28,10 @@ public class Main {
             pattern = args[0];
         }
 
-        long timeMillis = System.currentTimeMillis(); // for time logging
+        // for time-using logging
+        long timeMillis = System.currentTimeMillis();
         log.info("Parser started...");
+
         Set<String> absLinks = Parser.getUrlSetFromSearchByPattern(pattern);
 
         log.info("All search urls (" + absLinks.size() + ") collected in "
@@ -54,9 +56,15 @@ public class Main {
         // write xml to file
         SerializeXML.generateXMLtoFile(offers, "offers.xml");
 
-//        System.out.println(offers.toString()); // test xml serialization
+        // Show POJOs on console
+//        System.out.println(offers.toString());
 
         log.info("Parsing finished in " + (System.currentTimeMillis() - timeMillis) + " ms.");
+        log.info("Amount of triggered HTTP request: " + Parser.getHttpRequestsCount() + ".");
+        log.info("Amount of extracted products: " + offers.getList().size() + ".");
+        log.info("Memory Footprint: "
+                + ((Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024)
+                + " kilobytes.");
         System.out.println("Press enter to exit");
         sc.nextLine();
         log.info("----------------- Exiting -----------------");
