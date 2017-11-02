@@ -13,7 +13,8 @@ Parser tested on search request with __8__ search pages, __750__ product pages a
 Request `shirt+only`, URL: https://www.aboutyou.de/suche?category=20201&term=shirt+only.
 
 ### Some important log lines: ###
-```12:45:47 |  INFO | ggalantsev.Main | All search urls (750) collected in 9726 ms.
+```
+12:45:47 |  INFO | ggalantsev.Main | All search urls (750) collected in 9726 ms.
 12:52:24 |  INFO | ggalantsev.Main | Parsing finished in 406630 ms.
 12:52:24 |  INFO | ggalantsev.Main | Amount of triggered HTTP request: 758.
 12:52:24 |  INFO | ggalantsev.Main | Amount of extracted products: 3773.
