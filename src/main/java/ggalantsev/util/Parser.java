@@ -29,7 +29,16 @@ public class Parser {
     private static int httpRequestsCount = 0;
 
     public static Set<String> getUrlSetFromSearchByPattern(String pattern) {
-        return getUrlSetFromSearch("https://www.aboutyou.de/suche?term=%22" + pattern + "%22");
+        Set<String> offersURLs = new HashSet<>();
+        int[] categories = new int[]{138113, 20201, 20202};
+        for (int category : categories) {
+            offersURLs.addAll(
+                    getUrlSetFromSearch(
+                            "https://www.aboutyou.de/suche?"
+                                    + "term=%22" + pattern + "%22"
+                                    + "&category=" + category ));
+        }
+        return offersURLs;
     }
 
     public static Set<String> getUrlSetFromSearch(String searchUrl) {
@@ -111,13 +120,13 @@ public class Parser {
                     variant.getAsJsonObject()
                             .get("price").getAsJsonObject()
                             .get("current").getAsBigInteger())
-                    .divide(new BigDecimal(200))
+                    .divide(new BigDecimal(100))
                     .setScale(2, BigDecimal.ROUND_HALF_UP));
             v.setInitialPrice(new BigDecimal(
                     variant.getAsJsonObject()
                             .get("price").getAsJsonObject()
                             .get("old").getAsBigInteger())
-                    .divide(new BigDecimal(200))
+                    .divide(new BigDecimal(100))
                     .setScale(2, BigDecimal.ROUND_HALF_UP));
             variants.put(v.getId(), v);
         }
