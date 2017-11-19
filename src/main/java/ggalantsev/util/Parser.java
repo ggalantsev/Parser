@@ -35,7 +35,7 @@ public class Parser {
             offersURLs.addAll(
                     getUrlSetFromSearch(
                             "https://www.aboutyou.de/suche?"
-                                    + "term=%22" + pattern + "%22"
+                                    + "term=" + pattern.replaceAll(" ", "+")
                                     + "&category=" + category ));
         }
         return offersURLs;
@@ -49,20 +49,23 @@ public class Parser {
 
         Set<String> offersURLs = new HashSet<String>();
 
-        Elements href = search.body().getElementsByClass("product-image-list").first()
-                .getElementsByAttribute("href");
-
-        for (Element element : href) {
-            String url = element.attr("href");
-            if (url != null && url.length() > 0) {
-                if (url.indexOf("/p/") == 0) {
-                    offersURLs.add("https://www.aboutyou.de" + url);
-                } else {
-                    offersURLs.addAll(getUrlSetFromSearch("https://www.aboutyou.de" + url));
+        Elements noResultAlert = search.getElementsByClass("no-result-page");
+        // If found smth
+        if (noResultAlert.toString().equals("")) {
+            Elements href = search.body().getElementsByClass("product-image-list").first()
+                    .getElementsByAttribute("href");
+            for (Element element : href) {
+                String url = element.attr("href");
+                if (url != null && url.length() > 0) {
+                    if (url.indexOf("/p/") == 0) {
+                        offersURLs.add("https://www.aboutyou.de" + url);
+                    } else {
+                        offersURLs.addAll(getUrlSetFromSearch("https://www.aboutyou.de" + url));
+                    }
                 }
             }
+            log.trace("Collected " + offersURLs.size() + " urls from " + searchUrl);
         }
-        log.trace("Collected " + offersURLs.size() + " urls from " + searchUrl);
         return offersURLs;
     }
 
@@ -202,7 +205,7 @@ public class Parser {
                 .replaceAll("\n+", "");
     }
 
-    public static int getHttpRequestsCount(){
+    public static int getHttpRequestsCount() {
         return httpRequestsCount;
     }
 
